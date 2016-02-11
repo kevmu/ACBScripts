@@ -137,21 +137,38 @@ open(OUTFILE, ">$outfile") or die "Couldn't open file $outfile for writting, $!"
 print "##gff-version   3" . "\n";
 foreach my $target_id (sort keys %gmap_summary){
     warn $target_id . "\n";
-    foreach my $alignment_id (sort keys $gmap_summary{$target_id}){
+    foreach my $alignment_id (sort keys %{$gmap_summary{$target_id}}){
         
         my ($query_name, $query_id, $coverage, $percent_id, $matches, $mismatches, $indels, $unknowns, $query_start, $query_end, $query_length, $query_strand, $target_start, $target_end, $target_length, $target_strand, $amino_acid_start, $amino_acid_end, $amino_acid_length, $amino_acid_changes, $num_exons) = split(/\t/, $gmap_summary{$target_id}{$alignment_id});
 #        warn join("===",$query_name, $query_id);
+#$target_id, $source, $feature, $start, $end, $score, $strand, $frame, $attribute) = split(/\t/, );
         if(defined($gmap_gff{$target_id}{$alignment_id}{"gene"})){
-            warn $gmap_gff{$target_id}{$alignment_id}{"gene"} . "\n";
-            
-            warn $gmap_summary{$target_id}{$alignment_id} . "\n";
+            #warn $gmap_gff{$target_id}{$alignment_id}{"gene"} . "\n";
+            my ($target_id, $source, $feature, $start, $end, $score, $strand, $frame, $attribute) = split(/\t/, $gmap_gff{$target_id}{$alignment_id}{"gene"});
+	   
+	    my $note_attribute = ""; 
+	    if(defined(@{$blastx{$query_name}})){
+	    	my ($query_seq, $target_seq, $query_coverage, $protein_query_coverage, $percent_identity, $percent_positives, $query_length, $target_length, $align_length, $num_mismatch, $num_gaps, $query_start, $query_end, $target_start, $target_end, $e_value, $bit_score) = split(/\t/, @{$blastx{$query_name}}[0]);
+	    
+		#	die join("\n", @{$blastx{$query_name}}) . "\n";
+		$note_attribute = join("=", "Note", $target_seq);
+
+	    }
+	    
+	    #my $gmap_align_attribute = join("=", "gmap_alignment", "");
+	    #my $gene_attributes = join(";", $attribute);
+	    #print join("\t", $target_id, "GMAP/BLASTX", $feature, $end, $score, $strand, $frame,) . "\n";
+
+            #warn $gmap_summary{$target_id}{$alignment_id} . "\n";
+	    #JH243385.1	GMAP/BLASTx	gene	1997	33189	.	+	.	Note=gi|645241791|ref|XP_008227245.1| PREDICTED: chromodomain-helicase-DNA-binding protein 1 [Prunus mume];ID=gi|351591582|gb|JP450028.1|.path1; gmap_alignment=<b>Target_ID:</b> <b>JH243385.1</b> Cannabis sativa unplaced genomic scaffold <b>scaffold25337</b>%2C whole genome shotgun sequence <br> <a href%3D"http://www.ncbi.nlm.nih.gov/nuccore/JH243385.1?report%3Dgenbank" target%3D"_blank">[ <b>GenBank</b> ]</a> <a href%3D"http://www.ncbi.nlm.nih.gov/nuccore/JH243385.1?report%3Dfasta" target%3D"_blank">[ <b>FASTA</b> ]</a> <a href%3D"http://www.ncbi.nlm.nih.gov/nuccore/JH243385.1?report%3Dgirevhist" target%3D"_blank">[ <b>NCBI Revision History</b> ]</a> <a href%3D"http://genome.ccbr.utoronto.ca/cgi-bin/hgTracks?hgsid%3D68876%26position%3Dscaffold25337" target%3D"_blank">[ <b>Cannabis UCSC Genome Browser</b> ]</a><br><br><b>Query_ID:<b> <b>JP450028.1</b> TSA: Cannabis sativa <b>PK00237.2_1</b>.CasaPuKu mRNA sequence<br> <a href%3D"http://www.ncbi.nlm.nih.gov/nuccore/JP450028.1?report%3Dgenbank" target%3D"_blank">[ <b>GenBank</b> ]</a> <a href%3D"http://www.ncbi.nlm.nih.gov/nuccore/JP450028.1?report%3Dfasta" target%3D"_blank">[ <b>FASTA</b> ]</a> <a href%3D"http://www.ncbi.nlm.nih.gov/nuccore/JP450028.1?report%3Dgirevhist" target%3D"_blank">[ <b>NCBI Revision History</b> ]</a> <br><br><a href%3D"http://ec2-54-201-126-170.us-west-2.compute.amazonaws.com/jbrowse/data/gmap_summaries/JH243385.1-JP450028.1_gmap_summary.html" target%3D"_blank">[ <b>GMAP Alignment Summary</b> ]</a><br><b>query_coverage:</b> 100.0%3B <b>percent_identity:</b> 100.0<br><b>num_matches:</b> 4901%3B <b>num_mismatches:</b> 1<br> <b>num_indels:</b> 0%3B <b>num_unknowns:</b> 0<br><br>;_Organism=Cannabis sativa <a href%3D"http://www.ncbi.nlm.nih.gov/Taxonomy/Browser/wwwtax.cgi?mode%3DInfo%26id%3D3483%26lvl%3D3%26lin%3Df%26keep%3D1%26srchmode%3D1%26unlock" target%3D"_blank">[ Taxonomy Browser ]</a>;Name=gi|351591582|gb|JP450028.1| TSA: Cannabis sativa PK00237.2_1.CasaPuKu mRNA sequence
+	    #
         }else{
             die "gene";
         }
         if(defined($gmap_gff{$target_id}{$alignment_id}{"mRNA"})){
             warn $gmap_gff{$target_id}{$alignment_id}{"mRNA"} . "\n";
-            if(defined(@{$blastx{$target_id}{$query_name}})){
-                warn join("\n", @{$blastx{$target_id}{$query_name}}) . "\n";
+            if(defined(@{$blastx{$query_name}})){
+                warn join("\n", @{$blastx{$query_name}}) . "\n";
             }
             
         }else{

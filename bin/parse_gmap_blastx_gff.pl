@@ -264,10 +264,10 @@ foreach my $target_id (sort keys %gmap_summary){
 			my $gene_attributes = "";
 			
 			if($note_attribute ne ""){
-				$gene_attributes = join(";", $attributes{"ID"}, $name_attribute, $organism_attribute, $note_attribute, $gmap_align_attribute);
+				$gene_attributes = join(";", join("=", "ID", $attributes{"ID"}), $name_attribute, $organism_attribute, $note_attribute, $gmap_align_attribute);
 			}else{
 
-				$gene_attributes = join(";", $attributes{"ID"}, $name_attribute, $organism_attribute, $gmap_align_attribute);
+				$gene_attributes = join(";", join("=", "ID", $attributes{"ID"}), $name_attribute, $organism_attribute, $gmap_align_attribute);
 			}
 			print OUTFILE join("\t", $target_id, "GMAP%5CBLASTX", $feature, $start, $end, $score, $strand, $frame, $gene_attributes) . "\n";
         }else{

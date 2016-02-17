@@ -102,7 +102,7 @@ while(<INFILE>){
             
             my $query_name = $attributes{"Parent"};
             $current_query_path = $query_name;
-            $gmap_gff{$target_id}{$query_name}{"mRNA"} = join("\t", $target_id, $source, $feature, $start, $end, $score, $strand, $frame, join(";", $attributes{"ID"}, $attributes{"Name"}, $attributes{"Parent"}));
+            $gmap_gff{$target_id}{$query_name}{"mRNA"} = join("\t", $target_id, $source, $feature, $start, $end, $score, $strand, $frame, join(";", join("=", $attributes{"ID"}), join("=", $attributes{"Name"}), join("=", $attributes{"Parent"})));
         }
         if($feature eq "exon"){
             push(@{$gmap_gff{$target_id}{$current_query_path}{"exon"}}, join("\t", $target_id, $source, $feature, $start, $end, $score, $strand, $frame, $attribute));

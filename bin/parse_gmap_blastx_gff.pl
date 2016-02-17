@@ -214,7 +214,7 @@ foreach my $target_id (sort keys %gmap_summary){
 
 			my $jbrowse_query_id = $query_id;
 			$jbrowse_query_id =~ s/(PK\d+\.\d+\_1)/<b>$1<\/b>/g;
-			my $gmap_query_id = join(" ", "<b>Query_ID:<b>", $jbrowse_query_id);
+			my $gmap_query_id = join(" ", "<b>Query_ID:</b>", $jbrowse_query_id);
 			my @split_query_header = split(/\|/, $query_name);
 			
 			my $query_accession_num = $split_query_header[3];

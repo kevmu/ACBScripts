@@ -102,7 +102,7 @@ while(<INFILE>){
             
             my $query_name = $attributes{"Parent"};
             $current_query_path = $query_name;
-            $gmap_gff{$target_id}{$query_name}{"mRNA"} = join("\t", $target_id, $source, $feature, $start, $end, $score, $strand, $frame, join(";", join("=", $attributes{"ID"}), join("=", $attributes{"Name"}), join("=", $attributes{"Parent"})));
+            $gmap_gff{$target_id}{$query_name}{"mRNA"} = join("\t", $target_id, $source, $feature, $start, $end, $score, $strand, $frame, join(";", join("=", "ID", $attributes{"ID"}), join("=", "Name", $attributes{"Name"}), join("=", "Parent", $attributes{"Parent"})));
         }
         if($feature eq "exon"){
             push(@{$gmap_gff{$target_id}{$current_query_path}{"exon"}}, join("\t", $target_id, $source, $feature, $start, $end, $score, $strand, $frame, $attribute));
@@ -146,7 +146,7 @@ close(INFILE) or die "Couldn't close file $scaffolds_infile";
 my $filename = fileparse($gmap_gff_infile, qr/\.gff/);
 my $outfile = join('/', $output_dir, $filename . ".jbrowse.gff");
 open(OUTFILE, ">$outfile") or die "Couldn't open file $outfile for writting, $!";
-print "##gff-version   3" . "\n";
+print OUTFILE "##gff-version   3" . "\n";
 foreach my $target_id (sort keys %gmap_summary){
     warn $target_id . "\n";
     foreach my $alignment_id (sort keys %{$gmap_summary{$target_id}}){
@@ -355,7 +355,7 @@ foreach my $target_id (sort keys %gmap_summary){
         }
         
     }
-    print "###" . "\n";
+    print OUTFILE "###" . "\n";
 }
 close(OUTFILE) or die "Couldn't close file $outfile";
 

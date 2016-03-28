@@ -63,7 +63,7 @@ while(<INFILE>){
             die "no path $alignment_name";
         }
         
-        if(($coverage >= 80) and ($percent_id >= 90) and ($query_length >= 500)){
+        if(($coverage >= 80) and ($percent_id >= 90)){
             $gmap_summary{$target_id}{$alignment_id} = join("\t", $query_name, $query_id, $coverage, $percent_id, $matches, $mismatches, $indels, $unknowns, $query_start, $query_end, $query_length, $query_strand, $target_start, $target_end, $target_length, $target_strand, $amino_acid_start, $amino_acid_end, $amino_acid_length, $amino_acid_changes, $num_exons);
         
         }
@@ -212,12 +212,15 @@ foreach my $target_id (sort keys %gmap_summary){
 									
 			my $gmap_target_url_strings = join(" ", $gmap_target_genebank_url, $gmap_target_fasta_url, $gmap_target_ncbi_revisions_url, $gmap_target_cannabis_unsc_gbrowser);
 
-			my $jbrowse_query_id = $query_id;
-			$jbrowse_query_id =~ s/(PK\d+\.\d+\_1)/<b>$1<\/b>/g;
-			my $gmap_query_id = join(" ", "<b>Query_ID:<b>", $jbrowse_query_id);
+			
+			my ($jbrowse_query_id, $query_header) = split(/\s/, $query_id, 2);
+			
+			$query_header =~ s/(PK\d+\.\d+\_\d+)/<b>$1<\/b>/g;
 			my @split_query_header = split(/\|/, $query_name);
 			
 			my $query_accession_num = $split_query_header[3];
+			my $gmap_query_id = join(" ", "<b>Query_ID:</b>", $query_accession_num, $query_header);
+			
 			
 			my $gmap_query_genebank_url = join("", "<a href%3D%22http://www.ncbi.nlm.nih.gov/nuccore/", $query_accession_num, "%3Freport%3Dgenbank%22%20target%3D%22_blank%22>[ <b>GenBank</b> ]</a>");
 			my $gmap_query_fasta_url = join("", "<a href%3D%22http://www.ncbi.nlm.nih.gov/nuccore/", $query_accession_num, "%3Freport%3Dfasta%22%20target%3D%22_blank%22>[ <b>FASTA</b> ]</a>");
@@ -225,7 +228,7 @@ foreach my $target_id (sort keys %gmap_summary){
 			my $gmap_query_url_strings = join(" ", $gmap_query_genebank_url, $gmap_query_fasta_url, $gmap_query_ncbi_revisions_url);
 
 
-			my $gmap_alignment_overview = "[ <b>GMAP Alignment Overview</b> ]";
+			#my $gmap_alignment_overview = "<b>GMAP Alignment Overview</b>";
 			my $gmap_query_coverage = join(" ", "<b>query_coverage:</b>", $coverage);
 			my $gmap_percent_identity = join(" ", "<b>percent_identity:</b>", $percent_id);
 
@@ -235,7 +238,24 @@ foreach my $target_id (sort keys %gmap_summary){
 			my $gmap_num_indels = join(" ", "<b>num_indels:</b>", $indels);
 			my $gmap_num_unknowns = join(" ", "<b>num_unknowns:</b>", $unknowns);
 
-			my $gmap_alignment_summary = join("<br>", $gmap_alignment_overview, join("%3B", $gmap_query_coverage, $gmap_percent_identity), join("%3B", $gmap_num_matches, $gmap_num_mismatches), join("%3B", $gmap_num_indels, $gmap_num_unknowns . " <br><br>"));
+			my $gmap_query_start = join(" ", "<b>query_start:</b>", $query_start);
+			my $gmap_query_end = join(" ", "<b>query_end:</b>", $query_end);
+			my $gmap_query_length = join(" ", "<b>query_length:</b>", $query_length, "bp");
+			my $gmap_query_strand = join(" ", "<b>query_strand:</b>", $query_strand);
+			
+			my $gmap_target_start = join(" ", "<b>target_start:</b>", $target_start);
+			my $gmap_target_end = join(" ", "<b>target_end:</b>", $target_end);
+			my $gmap_target_length = join(" ", "<b>target_length:</b>", $target_length, "bp");
+			my $gmap_target_strand = join(" ", "<b>target_strand:</b>", $target_strand); 
+			
+			my $gmap_amino_acid_start = join(" ", "<b>amino_acid_start:</b>", $amino_acid_start);
+			my $gmap_amino_acid_end = join(" ", "<b>amino_acid_end:</b>", $amino_acid_end);
+			my $gmap_amino_acid_length = join(" ", "<b>amino_acid_length:</b>", $amino_acid_length, "aa");
+			my $gmap_amino_acid_changes = join(" ", "<b>amino_acid_changes:</b>", $amino_acid_changes);  
+			my $gmap_num_exons = join(" ", "<b>num_exons:</b>", $num_exons);
+			
+			#my $gmap_alignment_summary = join("<br>", $gmap_alignment_overview, join("%3B ", $gmap_query_coverage, $gmap_percent_identity), join("%3B ", $gmap_num_matches, $gmap_num_mismatches), join("%3B ", $gmap_num_indels, $gmap_num_unknowns), join("%3B ", $gmap_query_start, $gmap_query_end, $gmap_query_length, $gmap_query_strand), join("%3B ", $gmap_target_start, $gmap_target_end, $gmap_target_length, $gmap_target_strand), join("%3B ", $gmap_amino_acid_start, $gmap_amino_acid_end, $gmap_amino_acid_length), $gmap_amino_acid_changes, $gmap_num_exons . " <br><br>");
+			my $gmap_alignment_summary = join("<br>", join("%3B ", $gmap_query_coverage, $gmap_percent_identity), join("%3B ", $gmap_num_matches, $gmap_num_mismatches), join("%3B ", $gmap_num_indels, $gmap_num_unknowns), join("%3B ", $gmap_query_start, $gmap_query_end, $gmap_query_length, $gmap_query_strand), join("%3B ", $gmap_target_start, $gmap_target_end, $gmap_target_length, $gmap_target_strand), join("%3B ", $gmap_amino_acid_start, $gmap_amino_acid_end, $gmap_amino_acid_length), $gmap_amino_acid_changes, $gmap_num_exons . " <br><br>");
 
 			my $gmap_concat_attributes = join("<br><br> ", join("<br>", $gmap_target_id, $gmap_target_url_strings), join("<br>", $gmap_query_id, $gmap_query_url_strings), $gmap_alignment_summary);
 
@@ -274,8 +294,11 @@ foreach my $target_id (sort keys %gmap_summary){
             die "gene";
         }
         if(defined($gmap_gff{$target_id}{$alignment_id}{"mRNA"})){
-            print OUTFILE $gmap_gff{$target_id}{$alignment_id}{"mRNA"} . "\n";
+            #print OUTFILE $gmap_gff{$target_id}{$alignment_id}{"mRNA"} . "\n";
 			my ($target_id, $source, $feature, $start, $end, $score, $strand, $frame, $attribute) = split(/\t/, $gmap_gff{$target_id}{$alignment_id}{"mRNA"});
+			
+			#print OUTFILE join("\t", $target_id, "GMAP%5CBLASTX", $feature, $start, $end, $score, $strand, $frame, $attribute) . "\n";
+			
 			my %attributes = ();
 			my @split_attributes = split(/;/, $attribute);
 			foreach my $attribute_entry (@split_attributes){
@@ -284,9 +307,9 @@ foreach my $target_id (sort keys %gmap_summary){
 				$attributes{$attribute_id} = $attribute_value;
 			}
 			
-			my $blastx_tophits = "";
+			my $blastx_annotation_attributes = "";
 			if(defined(@{$blastx{$query_name}})){
-				my @blastx_hits = ();
+				my %blastx_hits = ();
 				for(my $i = 0; $i < scalar(@{$blastx{$query_name}}); $i++){
 					my ($query_seq, $target_seq, $query_coverage, $protein_query_coverage, $percent_identity, 
 						$percent_positives, $query_length, $target_length, $align_length, $num_mismatch, $num_gaps, 
@@ -301,14 +324,79 @@ foreach my $target_id (sort keys %gmap_summary){
 						$query_seq_header = $query_seq;
 					}
 					
+					
+					my ($query_seq_id, $query_sequence_header) = split(/\s/, $query_id, 2);
+					
+					my @split_query_header = split(/\|/, $query_seq_id);
+					
+					
+					my $query_gi_num = "<b>$split_query_header[1]</b>";
+					my $query_accession_num = "<b>$split_query_header[3]</b>";
+                    my $query_accession_id = $split_query_header[3];
+                    $query_sequence_header =~ s/(PK\d+\.\d+\_\d+)/<b>$1<\/b>/g;
+                    
+					$query_seq_header = join("| ", $split_query_header[0], $query_gi_num, $split_query_header[2], $query_accession_num, $query_sequence_header);
+                    #die $query_seq_header;
+					my $target_seq_header = "";
+					if($target_seq =~ m/ gi/){
+						my ($target_header, $target_header_concat) = split(' gi', $target_seq, 2);
+						$target_seq_header = $target_header;
+					}
+					else{
+						$target_seq_header = $target_seq;
+					}
+					
+					my ($target_seq_id, $target_sequence_header) = split(/\s/, $target_seq_header, 2);
+					
+					my @split_target_header = split(/\|/, $target_seq_id);
+					my $target_accession_num = $split_target_header[3];
+					
+					my $target_annotation = $target_sequence_header;
+					
 					my $blastx_counter = ($i + 1);
 					my $blast_hit_name = join("", "Blastx_hit", $blastx_counter);
 					
 					#die $query_seq;
-					my $blastx_query_genebank_url = join("", "<a href%3D%22http://www.ncbi.nlm.nih.gov/nuccore/", $query_id, "%3Freport%3Dgenbank%22%20target%3D%22_blank%22>[ <b>GenBank</b> ]</a>");
-					my $blastx_query_fasta_url = join("", "<a href%3D%22http://www.ncbi.nlm.nih.gov/nuccore/", $query_id, "%3Freport%3Dfasta%22%20target%3D%22_blank%22>[ <b>FASTA</b> ]</a>");
-					my $blastx_query_ncbi_revisions_url = join("", "<a href%3D%22http://www.ncbi.nlm.nih.gov/nuccore/", $query_id,"%3Freport%3Dgirevhist%22%20target%3D%22_blank%22>[ <b>NCBI Revision History</b> ]</a>");
+					my $blastx_query_genebank_url = join("", "<a href%3D%22http://www.ncbi.nlm.nih.gov/nuccore/", $query_accession_id, "%3Freport%3Dgenbank%22%20target%3D%22_blank%22>[ <b>GenBank</b> ]</a>");
+					my $blastx_query_fasta_url = join("", "<a href%3D%22http://www.ncbi.nlm.nih.gov/nuccore/", $query_accession_id, "%3Freport%3Dfasta%22%20target%3D%22_blank%22>[ <b>FASTA</b> ]</a>");
+					my $blastx_query_ncbi_revisions_url = join("", "<a href%3D%22http://www.ncbi.nlm.nih.gov/nuccore/", $query_accession_id, "%3Freport%3Dgirevhist%22%20target%3D%22_blank%22>[ <b>NCBI Revision History</b> ]</a>");
+					my $blastx_query_url_strings = join(" ", $blastx_query_genebank_url, $blastx_query_fasta_url, $blastx_query_ncbi_revisions_url);
+					
+					my $blastx_target_genepept_url = join("", "<a href%3D%22http://www.ncbi.nlm.nih.gov/protein/", $target_accession_num, "%3Freport%3Dgenpept%22%20target%3D%22_blank%22>[ <b>GenPept</b> ]</a>");
+					my $blastx_target_fasta_url = join("", "<a href%3D%22http://www.ncbi.nlm.nih.gov/protein/", $target_accession_num, "%3Freport%3Dfasta%22%20target%3D%22_blank%22>[ <b>FASTA</b> ]</a>");
+					my $blastx_target_ident_protiens_url = join("", "<a href%3D%22http://www.ncbi.nlm.nih.gov/protein/", $target_accession_num, "%3Freport%3Dipg%22%20target%3D%22_blank%22>[ <b>Identical Proteins</b> ]</a>");
+					my $blastx_target_url_strings = join(" ", $blastx_target_genepept_url, $blastx_target_fasta_url, $blastx_target_ident_protiens_url);
+					
+					my $blastx_annotation = join(" ", "Target_ID:", "<b>$target_accession_num</b>", $target_annotation);
+                    my $blastx_query_id = join(" ", "Query_ID:", "<b>$query_accession_num</b>", $query_sequence_header);
+					my $blastx_query_coverage = join(" ", "<b>query_transcript_coverage:</b>", $query_coverage);
+					my $blastx_protein_query_coverage = join(" ", "<b>query_protein_coverage:</b>", $protein_query_coverage);
+					
+					my $blastx_percent_identity = join(" ", "<b>percent_identity:</b>", $percent_identity);
+					my $blastx_percent_positives = join(" ", "<b>percent_positives:</b>", $percent_positives);
+					
+					my $blastx_num_mismatches = join(" ", "<b>num_mismatches:</b>", $num_mismatch);
+					my $blastx_num_gaps = join(" ", "<b>num_gaps:</b>", $num_gaps);
+				
+					my $blastx_query_length = join(" ", "<b>query_length:</b>", $query_length, "bp");
+					my $blastx_target_length = join(" ", "<b>target_length:</b>", $target_length, "aa");
+					my $blastx_align_length = join(" ", "<b>alignment_length:</b>", $align_length, "aa");
+					
+					my $blastx_query_start = join(" ", "<b>query_start:</b>", $query_start);
+					my $blastx_query_end = join(" ", "<b>query_end:</b>", $query_end);
+					
+					my $blastx_target_start = join(" ", "<b>target_start:</b>", $target_start);
+					my $blastx_target_end = join(" ", "<b>target_end:</b>", $target_end);
 
+					my $blastx_e_value = join(" ", "<b>e_value:</b>", $e_value);
+					my $blastx_bit_score = join(" ", "<b>bit_score:</b>", $bit_score);
+
+					
+					my $blastx_alignment_summary = join("<br>", join("%3B ", $blastx_query_coverage, $blastx_protein_query_coverage), join("%3B ", $blastx_percent_identity, $blastx_percent_positives),  join("%3B ", $blastx_num_mismatches, $blastx_num_gaps), join("%3B ", $blastx_query_start, $blastx_query_end, $blastx_query_length), join("%3B ", $blastx_target_start, $blastx_target_end, $blastx_target_length, $blastx_align_length), join("%3B ", $blastx_e_value, $blastx_bit_score));
+
+					my $blastx_concat_attributes = join("<br><br> ", join("<br>", $blastx_query_id, $blastx_query_url_strings), join("<br>", $blastx_annotation, $blastx_target_url_strings), $blastx_alignment_summary);
+					
+					$blastx_hits{$blast_hit_name} = join("=", $blast_hit_name, $blastx_concat_attributes);
 					
 # Blastx_hit1=gi|<b>351591582</b>|gb|<b>JP450028.1</b>| TSA: Cannabis sativa <b>PK00237.2_1</b>.CasaPuKu mRNA sequence
 # <br>
@@ -335,23 +423,48 @@ foreach my $target_id (sort keys %gmap_summary){
 # <br>
 # <b>e_value:</b> < 1e-179%3B <b>bit_score:</b> 2324
 				}
+				
+				my @blastx_attributes = ();
+				foreach my $blast_hit_name (sort keys %blastx_hits){
+					push(@blastx_attributes, $blastx_hits{$blast_hit_name});
+				}
+				$blastx_annotation_attributes = join(";", @blastx_attributes);
 			}
+            my @split_query_name = split(/\|/, $query_name);
             
+            my $query_accession_name = $split_query_name[3];
+            
+            my $blastx_query_search = join("=", "alignment_search", "<a href%3D%22http://blast.ncbi.nlm.nih.gov/Blast.cgi%3FPROGRAM%3Dblastx%26PAGE_TYPE%3DBlastSearch%26BLAST_SPEC%3D%26LINK_LOC%3Dblasttab%26LAST_PAGE%3Dblastx%26QUERY%3D$query_accession_name%22 target%3D%22_blank%22>$query_accession_name (Run NCBI BLASTX)</a>");
+			my $mnrna_attributes = "";
+			if($blastx_annotation_attributes ne ""){
+				$mnrna_attributes = join(";", $attribute, $blastx_query_search, $blastx_annotation_attributes);
+			}else{
+
+				$mnrna_attributes = join(";", $attribute, $blastx_query_search);
+			}
+			
+			print OUTFILE join("\t", $target_id, "GMAP%5CBLASTX", $feature, $start, $end, $score, $strand, $frame, $mnrna_attributes) . "\n";
+
+			
         }else{
             die "mRNA";
         }
         if(defined(@{$gmap_gff{$target_id}{$alignment_id}{"exon"}})){
             
-            print OUTFILE join("\n", @{$gmap_gff{$target_id}{$alignment_id}{"exon"}}) . "\n";
-            
+			foreach my $exon_entry (@{$gmap_gff{$target_id}{$alignment_id}{"exon"}}){
+				my ($target_id, $source, $feature, $start, $end, $score, $strand, $frame, $attribute) = split(/\t/, $exon_entry);
+				print OUTFILE join("\t", $target_id, "GMAP%5CBLASTX", $feature, $start, $end, $score, $strand, $frame, $attribute) . "\n";
+            }
         }else{
             die "exon";
         }
         
         if(defined(@{$gmap_gff{$target_id}{$alignment_id}{"CDS"}})){
             
-            print OUTFILE join("\n", @{$gmap_gff{$target_id}{$alignment_id}{"CDS"}}) . "\n";
-            
+			foreach my $cds_entry (@{$gmap_gff{$target_id}{$alignment_id}{"CDS"}}){
+				my ($target_id, $source, $feature, $start, $end, $score, $strand, $frame, $attribute) = split(/\t/, $cds_entry);
+				print OUTFILE join("\t", $target_id, "GMAP%5CBLASTX", $feature, $start, $end, $score, $strand, $frame, $attribute) . "\n";
+            }
         }
         
     }

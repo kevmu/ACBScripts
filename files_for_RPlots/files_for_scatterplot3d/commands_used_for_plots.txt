@@ -1,0 +1,6 @@
+R -i ~/Desktop/plots-for-trevor/$i -o ~/Desktop/plots-for-trevor/png_file; done
+  540  for i in `ls ~/Desktop/plots-for-trevor | grep "\.txt"`; do echo $i; png_file=$(echo $i | sed 's/\.txt/\.png/'); echo $png_file; ~/Desktop/scatterplot3d.R -i ~/Desktop/plots-for-trevor/$i -o ~/Desktop/plots-for-trevor/$png_file; done
+  541  cd ..
+  542  tar cvzf plots-for-trevor plots-for-trevor.tar.gz
+  543  tar cvzf plots-for-trevor.tar.gz plots-for-trevor
+

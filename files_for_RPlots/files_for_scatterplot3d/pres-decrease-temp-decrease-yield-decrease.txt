@@ -1,0 +1,6 @@
+Run	Pressure (bar)	Temperature (°C)	Time (min)	Yield (grams)	Concentration (g/mL)
+1	344	55	210	430.8	0.0
+2	328	50	240	420.0	0.0
+3	311	45	270	410.0	0.0
+4	293	40	300	400.0	0.0
+5	276	35	330	390.0	0.0
